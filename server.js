@@ -30,3 +30,22 @@ app.get("/api/hello", function (req, res) {
 var listener = app.listen(process.env.PORT, function () {
   console.log('Your app is listening on port ' + listener.address().port);
 });
+const requestIp = require("request-ip");
+
+var ipmiddleware = function(req, res, next) {
+  const clientIp = requestIp.getClientIp(req);
+  next();
+};
+
+app.use(requestIp.mw());
+
+app.get("/api/whoami/", (req, res) => {
+  var ipadress = req.clientIp;
+  var language = req.acceptsLanguages();
+  var software = req.get("User-Agent");
+  res.json({
+    ipadress: ipadress,
+    language: language[0],
+    software: software
+  });
+});
